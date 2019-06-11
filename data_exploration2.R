@@ -8,3 +8,4 @@ ggplot(data=my_data_spread, aes(x=date))+
 
 summary(data[1])
 
+View(data)
