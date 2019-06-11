@@ -6,7 +6,6 @@ library(dplyr)
 library(ggplot2)
 read.csv("mydata.csv")
 
-my_data <- read_csv("mydata.csv")
 
 #Datum formatieren
 my_data <- read_csv("mydata.csv", col_types = cols(date = col_date(format = "%Y-%m-%d")))
@@ -21,15 +20,33 @@ my_data_spread <- tidyr::spread(data=my_data, key = package, value = count)
 
 View(my_data_spread)
 
+#Tage zu Monate aggregiert 
+monthly <- 
+  my_data %>%
+  mutate(day = format( date, "%d"), month = format(date, "%m"), 
+         year = format(date, "%Y")) %>%
+  group_by(year, month, package) %>%
+  summarise(total = sum(count))
+
+monthly_df <-as.data.frame(monthly)
+monthly_spread <- tidyr::spread(monthly_df, key = package, value = total)
+
+####ggplot playground####
 ggplot(data=my_data_spread, aes(x=date))+
     geom_point(aes(y=AnalyzeFMRI), color='red') + 
     geom_point(aes(y=aspect), color='blue') +
     labs(x = "date", y = "count")
 
+ggplot(data=my_data_spread, aes(x=date))+
+  geom_point(aes(y=AnalyzeFMRI), color='green', size= 2) + 
+  geom_point(aes(y=aspect), color = 'blue',size = 2)+
+  geom_point(aes(y=asymmetry), color = 'red', size = 2)+
+  labs(x= "date", y = "count")
 
-plot(x = my_data_spread$date, y = my_data_spread$AnalyzeFMRI, type = "l")
-
-?plot
+View(my_data)
+ggplot(data = my_data, mapping = aes(x = count, y = package)) +
+  geom_point(alpha = 0.1, color = "blue")+ 
+  labs(x= "count", y = "package")
 
 #ade4a <- my_data_spread%>%
   #select(date,ade4)
