@@ -38,15 +38,16 @@ ggplot(data=my_data_spread, aes(x=date))+
     labs(x = "date", y = "count")
 
 ggplot(data=my_data_spread, aes(x=date))+
-  geom_point(aes(y=AnalyzeFMRI), color='green', size= 2) + 
-  geom_point(aes(y=aspect), color = 'blue',size = 2)+
-  geom_point(aes(y=asymmetry), color = 'red', size = 2)+
+  geom_line(aes(y=AnalyzeFMRI), color='green') + 
+  geom_line(aes(y=aspect), color = 'blue')+
+  geom_line(aes(y=asymmetry), color = 'red')+
   labs(x= "date", y = "count")
 
 View(my_data)
-ggplot(data = my_data, mapping = aes(x = count, y = package)) +
-  geom_point(alpha = 0.1, color = "blue")+ 
-  labs(x= "count", y = "package")
+plot <- ggplot(data = my_data, mapping = aes(x = count, y = package)) +
+        geom_point(alpha = 0.1, color = "blue")+ 
+        labs(x= "count", y = "package")
+plot
 
 #ade4a <- my_data_spread%>%
   #select(date,ade4)
