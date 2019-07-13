@@ -8,6 +8,7 @@ library(magrittr)
 library(xml2)
 library(lubridate)
 
+####function get_packages_per_ctv####
 # Packages per CTV
 # Returns a list of all packages and their ctv name and core specification
 get_packages_per_ctv <- function () {
@@ -29,7 +30,34 @@ get_packages_per_ctv <- function () {
     return(package_ctv)
 }
 
+####funtion get_api_data#####
+# Takes a string of a package
+# Returns a list of the corresponding API-data
+r_api <- function(package) {
+    url <- modify_url("http://crandb.r-pkg.org/", path = package)
+    
+    resp <- GET(url)
+    if (http_type(resp) != "application/json") {
+        stop("API did not return json", call. = FALSE)
+    }
+    parsed <-
+        jsonlite::fromJSON(content(resp, "text", encoding = "UTF-8"), simplifyVector = FALSE)
+}
 
+
+# Takes a list of package names as strings
+# Returns the API data as list
+get_api_data <- function (packages) {
+    api_data <- list()
+    for (package in packages) {
+        package.api.data <- r_api(package)
+        api_data <- c(api_data, list(package.api.data))
+    }
+    return(api_data)
+}
+
+
+####function get_edgelist_of_packages(api_data_of_packages)####
 # Takes API data as list
 # Returns a edgelist of "depends", "imports", "suggests"
 get_edgelist_of_packages <- function (api_data_of_packages) {
@@ -74,41 +102,7 @@ get_edgelist_of_packages <- function (api_data_of_packages) {
     return(edgelist)
 }
 
-# Takes a string of a package
-# Returns a list of the corresponding API-data
-r_api <- function(package) {
-    url <- modify_url("http://crandb.r-pkg.org/", path = package)
-    
-    resp <- GET(url)
-    if (http_type(resp) != "application/json") {
-        stop("API did not return json", call. = FALSE)
-    }
-    parsed <-
-        jsonlite::fromJSON(content(resp, "text", encoding = "UTF-8"), simplifyVector = FALSE)
-}
-
-
-# Takes a list of package names as strings
-# Returns the API data as list
-get_api_data <- function (packages) {
-    api_data <- list()
-    for (package in packages) {
-        package.api.data <- r_api(package)
-        api_data <- c(api_data, list(package.api.data))
-    }
-    return(api_data)
-}
-
-
-# Takes a list of package names as strings
-# Returns the download statistics of the given packages since 01.01.1999
-get_download_statistics <- function(packages) {
-    return (cran_downloads(
-        package = packages,
-        from    = as.Date("1999-01-01"),
-        to      = Sys.Date() - 1
-    ))
-}
+####function get_subcategory_of_psy_packages####
 
 # takes the list of psy_packages
 # returns as list of psy_packagaes with eaxch subcategory
@@ -144,4 +138,37 @@ get_subcategory_of_psy_packages <- function(psy_packages) {
     }
     
     return (psy_package_categories)
+}
+
+#####function get_download_statistics (adapted from 1999 --> 2008 to test data)####
+
+# Takes a list of package names as strings
+# Returns the download statistics of the given packages since 01.01.1999
+get_download_statistics <- function(packages) {
+    return (cran_downloads(
+        package = packages,
+        from    = as.Date("1999-01-01"),
+        to      = Sys.Date() - 1
+    ))
+}
+
+
+
+
+####function get_monthly_downloads (funktioniert noch nicht)#####
+
+#funktioniert noch nicht, weil später Zugriff auf psy_monthly_download
+get_monthly_downloads <- function (psy_download_statistics) {
+    psy_download_statistics%>%
+        mutate(
+        day = format(date, "%d"),
+        month = format(date, "%m"),
+        year = format(date, "%Y")
+    ) %>%
+        group_by(year, month, package) %>%
+        summarise(total = sum(count))
+    
+    monthly_df <- as.data.frame(psy_monthly_download)
+    monthly_download_spread <-
+        tidyr::spread(monthly_df, key = package, value = total)
 }
