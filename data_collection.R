@@ -140,17 +140,23 @@ get_subcategory_of_psy_packages <- function(psy_packages) {
     return (psy_package_categories)
 }
 
-#####function get_download_statistics (adapted from 1999 --> 2008 to test data)####
+#####function get_download_statistics (adapted from 1999)####
 
 # Takes a list of package names as strings
 # Returns the download statistics of the given packages since 01.01.1999
 get_download_statistics <- function(packages) {
-    return (cran_downloads(
-        package = packages,
-        from    = as.Date("1999-01-01"),
-        to      = Sys.Date() - 1
-    ))
+    download_statistics <- data.frame()
+    for (package in packages) {
+        current_package_stats <- cran_downloads(
+            package = package,
+            from    = as.Date("1999-01-01"),
+            to      = Sys.Date() - 1
+        )
+        download_statistics <- rbind(download_statistics, current_package_stats)
+    }
+    return(download_statistics)
 }
+
 
 
 
