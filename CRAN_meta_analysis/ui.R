@@ -1,15 +1,20 @@
 library(shiny)
 library(shinydashboard)
+library(ggplot2)
 
 body <- dashboardBody(
   
   fluidRow(
   box(title = "filter", width = 8, solidHeader = TRUE, status = "primary",
-      box(title = "ctv"),
-      box(title = "package"),
-      box(title = "core"),
-      box(title = "subcategory")
-  )),
+      selectInput("ctv", "CTV: a plot can contain multiple ctvs",
+                                       c("All")),
+      selectInput("package", "Package: you can select multiple packages",
+                  c("All")),
+      selectInput("core", "Core: you can either choose between FALSE and TRUE",
+                  c("FALSE","TRUE")),
+      selectInput("subcategory", "Psychometrics: you can specify on subcategories",
+                  c("All")
+  ))),
   
   
   
@@ -19,7 +24,7 @@ body <- dashboardBody(
         plotOutput("plot") 
     )
     
-  ), 
+  ),
   
   
   fluidRow(
@@ -40,7 +45,6 @@ body <- dashboardBody(
     box(title = "date range", width = 4, solidHeader = TRUE, status = "primary",
     dateRangeInput('dateRange2',
                    label = paste ('select a time span'),
-                   #start = Sys.Date() - 3, end = Sys.Date() + 3,
                    min = as.Date("1999-01-01"), max = Sys.Date() - 1,
                    separator = " - ", format = "dd/mm/yy",
                    startview = 'year', language = 'en', weekstart = 1
@@ -49,10 +53,10 @@ body <- dashboardBody(
   
   
   
-  ), 
+  ),
   
   fluidRow(
-    box(title = "date", width = 4, solidHeader = TRUE, status = "primary",
+    box(title = "date range", width = 4, solidHeader = TRUE, status = "primary",
         sliderInput("year", "time span", 1999, 2019, value = c(1999, 2019),
                     sep = "")
         )
