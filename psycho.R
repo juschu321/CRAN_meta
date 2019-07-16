@@ -1,5 +1,3 @@
-
-
 # takes a lot of time...
 psy_download_statistics <- get_download_statistics(psy_packages)
 psy_api_data <- get_api_data(psy_packages)

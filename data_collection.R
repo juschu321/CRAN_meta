@@ -7,6 +7,7 @@ library(rvest)
 library(magrittr)
 library(xml2)
 library(lubridate)
+library(dplyr)
 
 ####function get_packages_per_ctv####
 # Packages per CTV
