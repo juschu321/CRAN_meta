@@ -2,7 +2,17 @@ library(shiny)
 library(shinydashboard)
 library(ggplot2)
 
-server <- function(input, output) {
+server <- function(input, output, session) {
+   
+   choices <- reactive({
+      ctvs_select <- input$ctvs_select
+      print (ctvs_select) 
+      str(choices)
+   })
+   
+   output$ctvs_select <- renderText({choices})
+   
+   
    
    output$plot <- renderPlot(
       {ggplot(data = test2) +
@@ -13,11 +23,5 @@ server <- function(input, output) {
       })
    
    output$value <- renderPrint({ input$checkboxGroup })
-   
-   output$dateRangeText2 <- renderText({
-      paste("input$dateRange2 is", 
-            paste(as.character(input$dateRange2), collapse = " to ")
-      )
-   })
    
 }

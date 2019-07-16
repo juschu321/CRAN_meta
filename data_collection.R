@@ -178,3 +178,32 @@ get_monthly_downloads <- function (psy_download_statistics) {
     monthly_download_spread <-
         tidyr::spread(monthly_df, key = package, value = total)
 }
+
+#get all ctvs 
+ctvs <- list()
+
+for (n in names(packages_per_ctv))
+    if (is.factor(packages_per_ctv[[n]])) {
+        print(n)
+        print(levels(packages_per_ctv[[n]]))
+    }
+
+#get just the packages 
+just_packages <- data.frame()
+
+just_packages <- packages_per_ctv%>%
+    select(package)
+
+print(just_packages)
+
+
+#packages aus packages_per_ctv
+ctvs <- packages_per_ctv%>%
+    distinct(ctv)
+
+packages <- packages_per_ctv%>%
+    distinct(package)
+
+
+
+view(pppp)

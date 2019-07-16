@@ -6,14 +6,18 @@ body <- dashboardBody(
   
   fluidRow(
   box(title = "filter", width = 8, solidHeader = TRUE, status = "primary",
-      selectInput("ctv", "CTV: a plot can contain multiple ctvs",
-                                       c("All")),
-      textInput("package", "Package: you can select multiple packages"),
-      selectInput("core", "Core: you can either choose between FALSE and TRUE",
+      selectizeInput('ctvs_select', 'ctvs to select', choices = ctvs,
+        multiple = TRUE, options = list(maxItems = 40)),
+      selectizeInput('packages_select', 'packages to select', choices = packages,
+        multiple = TRUE, options = list(maxItems = 100)),
+      selectInput('core_select', "Core: you can either choose between FALSE and TRUE",
                   c("FALSE","TRUE")),
-      selectInput("subcategory", "Psychometrics: you can specify on subcategories",
+      selectInput('subcategory_select', "Psychometrics: you can specify on subcategories",
                   c("All")
-  ))),
+  )),
+  
+  box(title = "output", textOutput("ctvs_select"))),
+  
   
   
   
@@ -30,7 +34,7 @@ body <- dashboardBody(
      
       box( title = "dependencies", width = 4, solidHeader = TRUE, status = "primary",
         checkboxGroupInput(
-          "checkGroup",
+          'checkGroup',
           label = "specify type of dependencies",
           choices = list(
             "imports" = 1,
@@ -41,31 +45,16 @@ body <- dashboardBody(
         )
       ),
       
-    box(title = "date range", width = 4, solidHeader = TRUE, status = "primary",
-    dateRangeInput('dateRange2',
-                   label = paste ('select a time span'),
-                   min = as.Date("1999-01-01"), max = Sys.Date() - 1,
-                   separator = " - ", format = "dd/mm/yy",
-                   startview = 'year', language = 'en', weekstart = 1
-    )
-  )
+      box(title = "date range", width = 4, solidHeader = TRUE, status = "primary",
+          sliderInput('year', "time span", 1999, 2019, value = c(1999, 2019),
+                      sep = "")
   
   
-  
-  ),
-  
-  fluidRow(
-    box(title = "date range", width = 4, solidHeader = TRUE, status = "primary",
-        sliderInput("year", "time span", 1999, 2019, value = c(1999, 2019),
-                    sep = "")
+    
         )
   ))
     
     
-    
-  
-
-
 # We'll save it in a variable `ui` so that we can preview it in the console
 ui <- dashboardPage(
   dashboardHeader(title = "CRAN"),
